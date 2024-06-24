@@ -18,8 +18,6 @@ pub fn main() !void {
 
     cova.parseArgs(&args_iter, cli.CommandT, main_cmd, stdout, .{}) catch |err| switch (err) {
         error.UsageHelpCalled,
-        // Other common errors can also be handled in the same way. The errors below will call the
-        // Command's Usage or Help prompt automatically when triggered.
         error.TooManyValues,
         error.UnrecognizedArgument,
         error.UnexpectedArgument,
@@ -30,5 +28,5 @@ pub fn main() !void {
     };
     if (builtin.mode == .Debug) try cova.utils.displayCmdInfo(cli.CommandT, main_cmd, alloc, &stdout, false);
 
-    try matchCommand(main_cmd);
+    try matchCommand(main_cmd, alloc);
 }

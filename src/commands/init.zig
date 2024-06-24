@@ -3,6 +3,8 @@ const cova = @import("cova");
 const cli = @import("../cli.zig");
 const utils = @import("../utils.zig");
 
+const minecraft = @import("../api/minecraft.zig");
+
 const opt_struct = struct {
     should_install: ?bool = false,
 };
@@ -12,7 +14,7 @@ pub const command_struct = cli.CommandT{
     .description = "Initialize a new server",
     .opts = &.{
         cli.OptionT{
-            .name = "install",
+            .name = "should_install",
             .description = "Install fabric, minecraft, etc",
             .short_name = 'i',
             .long_name = "install",
@@ -24,12 +26,16 @@ pub const command_struct = cli.CommandT{
     },
 };
 
-pub fn run(cmd: *const cli.CommandT) !void {
-    std.debug.print("CommandT: {any}", .{cmd});
-    // const opts = try cmd.getOpts(.{});
-    // const should_install_opt = opts.get("should_install");
-    // const should_install = (should_install_opt.?.val.isSet()) orelse false;
-    // if (should_install) {
-    //     std.debug.print("yippeee, we should install minecraft!", .{});
-    // }
+pub fn run(cmd: *const cli.CommandT, alloc: std.mem.Allocator) !void {
+    const opts = try cmd.getOpts(.{});
+    if (opts.get("should_install")) |should_install_opt| {
+        if (should_install_opt.val.isSet()) {
+            // const should_install = try should_install_opt.val.getAs(bool);
+            // std.debug.print("Yippeee, we're supposed to install serbr, {}\n", .{should_install});
+            const response = try minecraft.getVersions(alloc);
+            defer response.deinit();
+
+            std.debug.print("Latest version: {s}\n", .{response.value.latest.release});
+        }
+    }
 }
