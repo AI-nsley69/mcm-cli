@@ -1,15 +1,35 @@
 const std = @import("std");
-const commands = @import("../cli.zig");
+const cova = @import("cova");
+const cli = @import("../cli.zig");
+const utils = @import("../utils.zig");
 
-pub const cmd_name: []const u8 = "init";
+const opt_struct = struct {
+    should_install: ?bool = false,
+};
 
-pub fn run(main_cmd: *const commands.CommandT) !void {
-    if (main_cmd.matchSubCmd(cmd_name)) |sub_cmd| {
-        std.debug.print("Running init command\n", .{});
-        const options = try sub_cmd.getOpts(.{});
-        const should_install = options.get("install").?.val.isSet();
-        if (should_install) {
-            std.debug.print("Install: {}\n", .{should_install});
-        }
-    }
+pub const command_struct = cli.CommandT{
+    .name = "init",
+    .description = "Initialize a new server",
+    .opts = &.{
+        cli.OptionT{
+            .name = "install",
+            .description = "Install fabric, minecraft, etc",
+            .short_name = 'i',
+            .long_name = "install",
+            .val = cli.ValueT.ofType(bool, .{
+                .name = "should_install",
+                .description = "Whether to install fabric, minecraft, etc",
+            }),
+        },
+    },
+};
+
+pub fn run(cmd: *const cli.CommandT) !void {
+    std.debug.print("CommandT: {any}", .{cmd});
+    // const opts = try cmd.getOpts(.{});
+    // const should_install_opt = opts.get("should_install");
+    // const should_install = (should_install_opt.?.val.isSet()) orelse false;
+    // if (should_install) {
+    //     std.debug.print("yippeee, we should install minecraft!", .{});
+    // }
 }
