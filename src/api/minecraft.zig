@@ -1,21 +1,23 @@
 const std = @import("std");
 const http = std.http;
 
+pub const version = struct {
+    id: []u8,
+    type: []u8,
+    url: []u8,
+    time: []u8,
+    releaseTime: []u8,
+    sha1: []u8,
+    complianceLevel: u8,
+};
+
 pub const versionResponse = struct {
     latest: struct {
         release: []u8,
         snapshot: []u8,
     },
 
-    versions: []struct {
-        id: []u8,
-        type: []u8,
-        url: []u8,
-        time: []u8,
-        releaseTime: []u8,
-        sha1: []u8,
-        complianceLevel: u8,
-    },
+    versions: []version,
 };
 
 pub fn getVersions(alloc: std.mem.Allocator) !std.json.Parsed(versionResponse) {

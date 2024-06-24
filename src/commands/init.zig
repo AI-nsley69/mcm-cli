@@ -30,7 +30,16 @@ pub fn run(cmd: *const cli.CommandT, alloc: std.mem.Allocator) !void {
             const response = try minecraft.getVersions(alloc);
             defer response.deinit();
 
-            std.debug.print("Latest version: {s}\n", .{response.value.latest.release});
+            var released_versions = std.ArrayList(minecraft.version).init(alloc);
+            defer released_versions.deinit();
+            for (response.value.versions) |item| {
+                if (std.mem.eql(u8, item.type, "release")) {
+                    try released_versions.append(item);
+                }
+            }
+
+            const json_str = try std.json.stringifyAlloc(alloc, released_versions.items[0..5], .{ .whitespace = .indent_2 });
+            std.debug.print("Last 5 versions: {s}\n", .{json_str});
         }
     }
 }
