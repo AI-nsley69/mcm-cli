@@ -5,10 +5,7 @@ const utils = @import("../utils.zig");
 
 const minecraft = @import("../api/minecraft.zig");
 
-const opt_struct = struct {
-    should_install: ?bool = false,
-};
-
+// Imported in the cli file
 pub const command_struct = cli.CommandT{
     .name = "init",
     .description = "Initialize a new server",
@@ -30,8 +27,6 @@ pub fn run(cmd: *const cli.CommandT, alloc: std.mem.Allocator) !void {
     const opts = try cmd.getOpts(.{});
     if (opts.get("should_install")) |should_install_opt| {
         if (should_install_opt.val.isSet()) {
-            // const should_install = try should_install_opt.val.getAs(bool);
-            // std.debug.print("Yippeee, we're supposed to install serbr, {}\n", .{should_install});
             const response = try minecraft.getVersions(alloc);
             defer response.deinit();
 

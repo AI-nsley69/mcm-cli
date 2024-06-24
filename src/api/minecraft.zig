@@ -22,6 +22,7 @@ pub fn getVersions(alloc: std.mem.Allocator) !std.json.Parsed(versionResponse) {
     var client = http.Client{ .allocator = alloc };
     defer client.deinit();
 
+    // URL for mc's official version manifest
     const uri = try std.Uri.parse("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json");
 
     var buf: [1024]u8 = undefined;
@@ -38,6 +39,5 @@ pub fn getVersions(alloc: std.mem.Allocator) !std.json.Parsed(versionResponse) {
     const body = try rdr.readAllAlloc(alloc, 1024 * 1024 * 4);
     defer alloc.free(body);
 
-    const json = try std.json.parseFromSlice(versionResponse, alloc, body, .{});
-    return json;
+    return try std.json.parseFromSlice(versionResponse, alloc, body, .{});
 }
