@@ -35,7 +35,7 @@ pub fn getVersions(alloc: std.mem.Allocator) !std.json.Parsed(versionResponse) {
     try std.testing.expect(req.response.status == .ok);
 
     var rdr = req.reader();
-    const body = try rdr.readAllAlloc(alloc, 1024 * 1024 * 32);
+    const body = try rdr.readAllAlloc(alloc, 1024 * 1024 * 4);
     defer alloc.free(body);
 
     const json = try std.json.parseFromSlice(versionResponse, alloc, body, .{});
