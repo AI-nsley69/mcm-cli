@@ -83,6 +83,8 @@ pub fn run(cmd: *const cli.CommandT, alloc: std.mem.Allocator) !void {
         std.process.exit(0);
     }
 
+    try utils.checkRequirements(alloc);
+
     const opts = try parseOptions(cmd);
     if (opts.should_install) {
         const response = try minecraft.getVersions(alloc);

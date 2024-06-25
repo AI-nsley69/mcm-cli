@@ -38,3 +38,13 @@ pub fn isInitialized() !bool {
 
     return true;
 }
+
+pub fn checkRequirements(alloc: std.mem.Allocator) !void {
+    const java_args: []const []const u8 = &.{ "java", "--version" };
+    var java_child = std.process.Child.init(java_args, alloc);
+    const process_term = try java_child.spawnAndWait();
+    if (process_term.Exited != 0) {
+        std.debug.print(":(\n", .{});
+        std.process.exit(1);
+    }
+}
